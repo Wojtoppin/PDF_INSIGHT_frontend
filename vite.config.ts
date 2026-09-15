@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/PDF_INSIGHT_back/',
+  base: '/PDF_INSIGHT_frontend/',
   plugins: [
     react(),
     babel({ presets: [reactCompilerPreset()] }),
