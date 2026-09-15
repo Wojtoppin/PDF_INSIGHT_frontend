@@ -1,10 +1,10 @@
 import { create } from "zustand";
-import { analyzeDocument } from "../api/analyzeDocument";
+import { analyzeDocument, AnalysisError, type ErrorKind } from "../api/analyzeDocument";
 import { validateFile } from "../helpers/validateFile";
 import type { DocumentAnalysis } from "../types/documentAnalysis.schema";
 
 export type AnalysisStatus = "idle" | "processing" | "success" | "error";
-export type ErrorKind = "validation" | "analysis";
+export type { ErrorKind };
 
 interface AnalysisState {
   status: AnalysisStatus;
@@ -15,15 +15,6 @@ interface AnalysisState {
   submit: (file: File) => Promise<void>;
   retry: () => void;
   reset: () => void;
-}
-
-async function runAnalysis(file: File): Promise<DocumentAnalysis> {
-  try {
-    return await analyzeDocument(file);
-  } catch {
-    // One silent retry on a bad AI response, per the brief's schema-validation contract.
-    return await analyzeDocument(file);
-  }
 }
 
 export const useAnalysisStore = create<AnalysisState>((set, get) => ({
@@ -41,7 +32,7 @@ export const useAnalysisStore = create<AnalysisState>((set, get) => ({
         file,
         result: null,
         errorMessage: validation.message,
-        errorKind: "validation",
+        errorKind: "file",
       });
       return;
     }
@@ -49,13 +40,14 @@ export const useAnalysisStore = create<AnalysisState>((set, get) => ({
     set({ status: "processing", file, result: null, errorMessage: null, errorKind: null });
 
     try {
-      const result = await runAnalysis(file);
+      const result = await analyzeDocument(file);
       set({ status: "success", result, errorMessage: null, errorKind: null });
-    } catch {
+    } catch (err) {
+      const isAnalysisError = err instanceof AnalysisError;
       set({
         status: "error",
-        errorMessage: "Nie udało się przeanalizować dokumentu. Spróbuj ponownie.",
-        errorKind: "analysis",
+        errorMessage: isAnalysisError ? err.message : "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+        errorKind: isAnalysisError ? err.kind : "transient",
       });
     }
   },

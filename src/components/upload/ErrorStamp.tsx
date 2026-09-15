@@ -9,7 +9,7 @@ export function ErrorStamp() {
     reset: state.reset,
   }));
 
-  const isValidation = errorKind === "validation";
+  const needsNewFile = errorKind === "file";
 
   return (
     <div className="flex flex-col items-center gap-6 py-16 text-center" role="alert">
@@ -21,8 +21,8 @@ export function ErrorStamp() {
 
       <p className="max-w-sm font-sans text-sm text-ink-soft">{errorMessage}</p>
 
-      <Button variant="ghost" onClick={isValidation ? reset : retry}>
-        {isValidation ? "Wybierz inny plik" : "Spróbuj ponownie"}
+      <Button variant="ghost" onClick={needsNewFile ? reset : retry}>
+        {needsNewFile ? "Wybierz inny plik" : "Spróbuj ponownie"}
       </Button>
     </div>
   );

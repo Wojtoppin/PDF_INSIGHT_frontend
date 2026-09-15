@@ -1,50 +1,79 @@
 import { documentAnalysisSchema, type DocumentAnalysis } from "../types/documentAnalysis.schema";
 
-export class AnalysisError extends Error {}
+export type ErrorKind = "file" | "transient";
 
-const MOCK_DELAY_MS = 1600;
+export class AnalysisError extends Error {
+  readonly kind: ErrorKind;
 
-function buildMockAnalysis(file: File): unknown {
-  return {
-    document: {
-      fileName: file.name,
-      pages: 4,
-      language: "pl",
-      type: "umowa",
-      title: "Umowa serwisowa",
-      date: "2026-09-01",
-    },
-    summary:
-      "Umowa określa zasady świadczenia usług serwisowych przez okres 12 miesięcy. Strony ustaliły miesięczne wynagrodzenie oraz termin płatności. Dokument zawiera również warunki wypowiedzenia i zakres odpowiedzialności wykonawcy.",
-    keyPoints: [
-      "Okres umowy: 12 miesięcy",
-      "Wynagrodzenie miesięczne: 12 500 PLN",
-      "Termin płatności: do 10. dnia miesiąca",
-      "Możliwość wypowiedzenia z 30-dniowym okresem",
-    ],
-    entities: {
-      organizations: ["Przykład sp. z o.o.", "Kontrahent SA"],
-      people: [],
-    },
-    amounts: [{ value: 12500.0, currency: "PLN", context: "wynagrodzenie miesięczne" }],
-    dates: [{ date: "2026-10-01", context: "termin płatności pierwszej faktury" }],
-    keywords: ["serwis", "SLA", "wynagrodzenie"],
-  };
+  constructor(message: string, kind: ErrorKind) {
+    super(message);
+    this.kind = kind;
+  }
+}
+
+const GENERIC_FILE_ERROR = "Nieprawidłowy plik. Wybierz plik PDF i spróbuj ponownie.";
+const GENERIC_TRANSIENT_ERROR = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.";
+const RATE_LIMIT_ERROR = "Zbyt wiele żądań. Spróbuj ponownie za chwilę.";
+const CONNECTION_ERROR = "Nie udało się połączyć z serwerem. Sprawdź połączenie i spróbuj ponownie.";
+const INVALID_RESPONSE_ERROR = "Odpowiedź serwera nie zgadza się z oczekiwanym formatem.";
+
+function errorFromBody(body: unknown): string | undefined {
+  if (typeof body === "object" && body !== null && "error" in body) {
+    return String((body as { error: unknown }).error);
+  }
+  return undefined;
 }
 
 /**
- * Placeholder for the real call to the Cloudflare Worker proxy (VITE_API_URL).
- * Mirrors the retry-once-on-invalid-response contract from the brief so the
- * store logic doesn't change when this is swapped for a real fetch.
+ * Maps a non-2xx /api/analyze response onto the two CTAs the UI can offer:
+ * "file" (same bytes will fail again, user must pick another file) or
+ * "transient" (worth retrying the same file). See the backend's error
+ * catalog: 400/422-with-`error` are file problems; 429/500/502 and the
+ * FastAPI default validation shape ({"detail": [...]}) are not.
  */
+function resolveError(status: number, body: unknown): AnalysisError {
+  const message = errorFromBody(body);
+
+  if (status === 429) {
+    return new AnalysisError(RATE_LIMIT_ERROR, "transient");
+  }
+  if (status === 400 || status === 422) {
+    return new AnalysisError(message ?? GENERIC_FILE_ERROR, "file");
+  }
+  if (status === 500 || status === 502) {
+    return new AnalysisError(message ?? GENERIC_TRANSIENT_ERROR, "transient");
+  }
+  return new AnalysisError(message ?? GENERIC_TRANSIENT_ERROR, "transient");
+}
+
 export async function analyzeDocument(file: File): Promise<DocumentAnalysis> {
-  await new Promise((resolve) => setTimeout(resolve, MOCK_DELAY_MS));
+  const formData = new FormData();
+  formData.append("file", file);
 
-  const raw = buildMockAnalysis(file);
-  const parsed = documentAnalysisSchema.safeParse(raw);
+  let response: Response;
+  try {
+    response = await fetch(`${import.meta.env.VITE_API_URL}/api/analyze`, {
+      method: "POST",
+      body: formData,
+    });
+  } catch {
+    throw new AnalysisError(CONNECTION_ERROR, "transient");
+  }
 
+  let body: unknown = null;
+  try {
+    body = await response.json();
+  } catch {
+    // Non-JSON body (e.g. a gateway error page) — fall through to the generic messages below.
+  }
+
+  if (!response.ok) {
+    throw resolveError(response.status, body);
+  }
+
+  const parsed = documentAnalysisSchema.safeParse(body);
   if (!parsed.success) {
-    throw new AnalysisError("Odpowiedź AI nie zgadza się ze schematem danych.");
+    throw new AnalysisError(INVALID_RESPONSE_ERROR, "transient");
   }
 
   return parsed.data;
