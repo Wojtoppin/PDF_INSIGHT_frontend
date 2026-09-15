@@ -2,12 +2,10 @@ import { Button } from "../common/Button";
 import { useAnalysisStore } from "../../store/analysisStore";
 
 export function ErrorStamp() {
-  const { errorMessage, errorKind, retry, reset } = useAnalysisStore((state) => ({
-    errorMessage: state.errorMessage,
-    errorKind: state.errorKind,
-    retry: state.retry,
-    reset: state.reset,
-  }));
+  const errorMessage = useAnalysisStore((state) => state.errorMessage);
+  const errorKind = useAnalysisStore((state) => state.errorKind);
+  const retry = useAnalysisStore((state) => state.retry);
+  const reset = useAnalysisStore((state) => state.reset);
 
   const needsNewFile = errorKind === "file";
 
