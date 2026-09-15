@@ -1,6 +1,5 @@
 import { documentAnalysisSchema, type DocumentAnalysis } from "../types/documentAnalysis.schema";
-
-export type ErrorKind = "file" | "transient";
+import type { ErrorKind } from "../types/errorKind";
 
 export class AnalysisError extends Error {
   readonly kind: ErrorKind;

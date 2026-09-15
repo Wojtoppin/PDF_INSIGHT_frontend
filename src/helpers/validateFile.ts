@@ -1,8 +1,5 @@
 import { ACCEPTED_MIME_TYPE, MAX_FILE_SIZE_BYTES, MAX_FILE_SIZE_MB } from "../constants/upload";
-
-export type FileValidationResult =
-  | { ok: true }
-  | { ok: false; message: string };
+import type { FileValidationResult } from "../types/fileValidationResult";
 
 export function validateFile(file: File): FileValidationResult {
   const isPdf =
