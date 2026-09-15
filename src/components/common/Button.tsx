@@ -15,7 +15,5 @@ const variants: Record<Variant, string> = {
 };
 
 export function Button({ variant = "primary", className = "", ...props }: ButtonProps) {
-  return (
-    <button className={`${base} ${variants[variant]} ${className}`} {...props} />
-  );
+  return <button className={`${base} ${variants[variant]} ${className}`} {...props} />;
 }

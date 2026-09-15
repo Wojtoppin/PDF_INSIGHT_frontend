@@ -45,7 +45,9 @@ export const useAnalysisStore = create<AnalysisState>((set, get) => ({
       const isAnalysisError = err instanceof AnalysisError;
       set({
         status: "error",
-        errorMessage: isAnalysisError ? err.message : "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+        errorMessage: isAnalysisError
+          ? err.message
+          : "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
         errorKind: isAnalysisError ? err.kind : "transient",
       });
     }

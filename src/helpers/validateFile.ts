@@ -2,8 +2,7 @@ import { ACCEPTED_MIME_TYPE, MAX_FILE_SIZE_BYTES, MAX_FILE_SIZE_MB } from "../co
 import type { FileValidationResult } from "../types/fileValidationResult";
 
 export function validateFile(file: File): FileValidationResult {
-  const isPdf =
-    file.type === ACCEPTED_MIME_TYPE || file.name.toLowerCase().endsWith(".pdf");
+  const isPdf = file.type === ACCEPTED_MIME_TYPE || file.name.toLowerCase().endsWith(".pdf");
 
   if (!isPdf) {
     return { ok: false, message: "Ten plik nie jest PDF-em. Wgraj plik w formacie .pdf." };

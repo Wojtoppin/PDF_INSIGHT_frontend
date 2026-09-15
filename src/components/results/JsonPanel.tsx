@@ -22,9 +22,7 @@ export function JsonPanel({ result }: JsonPanelProps) {
   return (
     <section className="py-8">
       <div className="flex items-center justify-between">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-soft">
-          {downloadName}
-        </p>
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-soft">{downloadName}</p>
         <Button variant="primary" onClick={handleDownload}>
           Pobierz JSON
         </Button>

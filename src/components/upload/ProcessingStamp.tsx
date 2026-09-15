@@ -4,7 +4,11 @@ interface ProcessingStampProps {
 
 export function ProcessingStamp({ fileName }: ProcessingStampProps) {
   return (
-    <div className="flex flex-col items-center gap-6 py-16 text-center" role="status" aria-live="polite">
+    <div
+      className="flex flex-col items-center gap-6 py-16 text-center"
+      role="status"
+      aria-live="polite"
+    >
       <div className="animate-stamp-in rounded-sm border-[3px] border-ink px-8 py-5">
         <p className="font-mono text-sm font-medium uppercase tracking-[0.2em] text-ink">
           Analiza dokumentu

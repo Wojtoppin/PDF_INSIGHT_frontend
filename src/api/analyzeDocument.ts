@@ -13,7 +13,8 @@ export class AnalysisError extends Error {
 const GENERIC_FILE_ERROR = "Nieprawidłowy plik. Wybierz plik PDF i spróbuj ponownie.";
 const GENERIC_TRANSIENT_ERROR = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.";
 const RATE_LIMIT_ERROR = "Zbyt wiele żądań. Spróbuj ponownie za chwilę.";
-const CONNECTION_ERROR = "Nie udało się połączyć z serwerem. Sprawdź połączenie i spróbuj ponownie.";
+const CONNECTION_ERROR =
+  "Nie udało się połączyć z serwerem. Sprawdź połączenie i spróbuj ponownie.";
 const INVALID_RESPONSE_ERROR = "Odpowiedź serwera nie zgadza się z oczekiwanym formatem.";
 
 function errorFromBody(body: unknown): string | undefined {

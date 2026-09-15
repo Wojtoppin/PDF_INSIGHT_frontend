@@ -44,12 +44,11 @@ export function EntityChips({ entities, amounts, dates, keywords }: EntityChipsP
       <ChipGroup label="Osoby" items={entities.people} />
       <ChipGroup
         label="Kwoty"
-        items={amounts.map((amount) => `${formatAmount(amount.value, amount.currency)} — ${amount.context}`)}
+        items={amounts.map(
+          (amount) => `${formatAmount(amount.value, amount.currency)} — ${amount.context}`,
+        )}
       />
-      <ChipGroup
-        label="Daty"
-        items={dates.map((date) => `${date.date} — ${date.context}`)}
-      />
+      <ChipGroup label="Daty" items={dates.map((date) => `${date.date} — ${date.context}`)} />
       <ChipGroup label="Słowa kluczowe" items={keywords} />
     </section>
   );
