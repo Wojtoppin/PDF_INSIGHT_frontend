@@ -1,10 +1,15 @@
-import { useRef, useState, type DragEvent, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type DragEvent, type KeyboardEvent } from "react";
 import { useAnalysisStore } from "../../store/analysisStore";
 
 export function Dropzone() {
   const submit = useAnalysisStore((state) => state.submit);
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dropzoneRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    dropzoneRef.current?.focus();
+  }, []);
 
   const openPicker = () => inputRef.current?.click();
 
@@ -25,6 +30,7 @@ export function Dropzone() {
   return (
     <div className="w-full">
       <div
+        ref={dropzoneRef}
         role="button"
         tabIndex={0}
         aria-label="Wgraj plik PDF, przeciągnij i upuść lub kliknij, aby wybrać"

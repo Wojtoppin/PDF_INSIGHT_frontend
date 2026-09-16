@@ -2,6 +2,7 @@ import { Dropzone } from "../components/upload/Dropzone";
 import { ProcessingStamp } from "../components/upload/ProcessingStamp";
 import { ErrorStamp } from "../components/upload/ErrorStamp";
 import { ResultsView } from "../components/results/ResultsView";
+import { HistoryList } from "../components/history/HistoryList";
 import { useAnalysisStore } from "../store/analysisStore";
 
 export function Home() {
@@ -27,7 +28,12 @@ export function Home() {
           </header>
         )}
 
-        {status === "idle" && <Dropzone />}
+        {status === "idle" && (
+          <>
+            <Dropzone />
+            <HistoryList />
+          </>
+        )}
         {status === "processing" && <ProcessingStamp fileName={file?.name ?? ""} />}
         {status === "error" && <ErrorStamp />}
         {status === "success" && result && <ResultsView result={result} />}

@@ -1,9 +1,15 @@
 import { create } from "zustand";
 import { analyzeDocument, AnalysisError } from "../api/analyzeDocument";
 import { validateFile } from "../helpers/validateFile";
+import {
+  appendHistoryEntry,
+  clearHistory as clearHistoryStorage,
+  loadHistory,
+} from "../helpers/analysisHistory";
 import type { AnalysisStatus } from "../types/analysisStatus";
 import type { DocumentAnalysis } from "../types/documentAnalysis.schema/documentAnalysis.schema";
 import type { ErrorKind } from "../types/errorKind";
+import type { HistoryEntry } from "../types/historyEntry.schema";
 
 interface AnalysisState {
   status: AnalysisStatus;
@@ -11,9 +17,12 @@ interface AnalysisState {
   result: DocumentAnalysis | null;
   errorMessage: string | null;
   errorKind: ErrorKind | null;
+  history: HistoryEntry[];
   submit: (file: File) => Promise<void>;
   retry: () => void;
   reset: () => void;
+  loadFromHistory: (id: string) => void;
+  clearHistory: () => void;
 }
 
 export const useAnalysisStore = create<AnalysisState>((set, get) => ({
@@ -22,6 +31,7 @@ export const useAnalysisStore = create<AnalysisState>((set, get) => ({
   result: null,
   errorMessage: null,
   errorKind: null,
+  history: loadHistory(),
 
   submit: async (file) => {
     const validation = validateFile(file);
@@ -40,7 +50,8 @@ export const useAnalysisStore = create<AnalysisState>((set, get) => ({
 
     try {
       const result = await analyzeDocument(file);
-      set({ status: "success", result, errorMessage: null, errorKind: null });
+      const history = appendHistoryEntry(result);
+      set({ status: "success", result, errorMessage: null, errorKind: null, history });
     } catch (err) {
       const isAnalysisError = err instanceof AnalysisError;
       set({
@@ -60,4 +71,21 @@ export const useAnalysisStore = create<AnalysisState>((set, get) => ({
 
   reset: () =>
     set({ status: "idle", file: null, result: null, errorMessage: null, errorKind: null }),
+
+  loadFromHistory: (id) => {
+    const entry = get().history.find((item) => item.id === id);
+    if (!entry) return;
+    set({
+      status: "success",
+      file: null,
+      result: entry.result,
+      errorMessage: null,
+      errorKind: null,
+    });
+  },
+
+  clearHistory: () => {
+    clearHistoryStorage();
+    set({ history: [] });
+  },
 }));
