@@ -1,5 +1,12 @@
 import { documentAnalysisSchema, type DocumentAnalysis } from "../types/documentAnalysis.schema";
 import type { ErrorKind } from "../types/errorKind";
+import {
+  CONNECTION_ERROR,
+  GENERIC_FILE_ERROR,
+  GENERIC_TRANSIENT_ERROR,
+  INVALID_RESPONSE_ERROR,
+  RATE_LIMIT_ERROR,
+} from "../constants/errors";
 
 export class AnalysisError extends Error {
   readonly kind: ErrorKind;
@@ -9,13 +16,6 @@ export class AnalysisError extends Error {
     this.kind = kind;
   }
 }
-
-const GENERIC_FILE_ERROR = "Nieprawidłowy plik. Wybierz plik PDF i spróbuj ponownie.";
-const GENERIC_TRANSIENT_ERROR = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.";
-const RATE_LIMIT_ERROR = "Zbyt wiele żądań. Spróbuj ponownie za chwilę.";
-const CONNECTION_ERROR =
-  "Nie udało się połączyć z serwerem. Sprawdź połączenie i spróbuj ponownie.";
-const INVALID_RESPONSE_ERROR = "Odpowiedź serwera nie zgadza się z oczekiwanym formatem.";
 
 function errorFromBody(body: unknown): string | undefined {
   if (typeof body === "object" && body !== null && "error" in body) {
