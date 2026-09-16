@@ -1,4 +1,4 @@
-import type { DocumentAnalysis } from "../../types/documentAnalysis.schema";
+import type { DocumentAnalysis } from "../../types/documentAnalysis.schema/documentAnalysis.schema";
 
 interface SummaryCardProps {
   document: DocumentAnalysis["document"];

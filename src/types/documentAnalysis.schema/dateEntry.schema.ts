@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const dateEntrySchema = z.object({
-  date: z.string(),
+  date: z.iso.date(),
   context: z.string(),
 });
 

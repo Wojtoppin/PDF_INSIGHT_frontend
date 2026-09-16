@@ -1,4 +1,7 @@
-import { documentAnalysisSchema, type DocumentAnalysis } from "../types/documentAnalysis.schema";
+import {
+  documentAnalysisSchema,
+  type DocumentAnalysis,
+} from "../types/documentAnalysis.schema/documentAnalysis.schema";
 import type { ErrorKind } from "../types/errorKind";
 import {
   CONNECTION_ERROR,

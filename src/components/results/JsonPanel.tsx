@@ -1,5 +1,5 @@
 import { Button } from "../common/Button";
-import type { DocumentAnalysis } from "../../types/documentAnalysis.schema";
+import type { DocumentAnalysis } from "../../types/documentAnalysis.schema/documentAnalysis.schema";
 
 interface JsonPanelProps {
   result: DocumentAnalysis;
@@ -21,9 +21,11 @@ export function JsonPanel({ result }: JsonPanelProps) {
 
   return (
     <section className="py-8">
-      <div className="flex items-center justify-between">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-soft">{downloadName}</p>
-        <Button variant="primary" onClick={handleDownload}>
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="min-w-0 flex-1 break-words font-mono text-xs uppercase tracking-[0.2em] text-ink-soft">
+          {downloadName}
+        </p>
+        <Button variant="primary" onClick={handleDownload} className="shrink-0">
           Pobierz JSON
         </Button>
       </div>

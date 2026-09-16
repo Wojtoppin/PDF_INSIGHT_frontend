@@ -40,6 +40,16 @@ describe("documentAnalysisSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("accepts all-empty arrays when the model found nothing (brief's null/[] rule)", () => {
+    const input = validAnalysis();
+    input.entities = { organizations: [], people: [] };
+    input.amounts = [];
+    input.dates = [];
+    input.keywords = [];
+    const result = documentAnalysisSchema.safeParse(input);
+    expect(result.success).toBe(true);
+  });
+
   it("rejects an unknown document.type", () => {
     const input = validAnalysis();
     // @ts-expect-error deliberately invalid for the test
@@ -55,11 +65,74 @@ describe("documentAnalysisSchema", () => {
     expect(result.success).toBe(false);
   });
 
+  it("rejects a language code that is uppercase", () => {
+    const input = validAnalysis();
+    input.document.language = "PL";
+    const result = documentAnalysisSchema.safeParse(input);
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a document.date that isn't ISO 8601 (YYYY-MM-DD)", () => {
+    const input = validAnalysis();
+    input.document.date = "01-09-2026";
+    const result = documentAnalysisSchema.safeParse(input);
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a dates[].date that isn't ISO 8601", () => {
+    const input = validAnalysis();
+    input.dates[0].date = "10 października 2026";
+    const result = documentAnalysisSchema.safeParse(input);
+    expect(result.success).toBe(false);
+  });
+
   it("rejects a currency code that isn't exactly 3 characters", () => {
     const input = validAnalysis();
     input.amounts[0].currency = "ZL";
     const result = documentAnalysisSchema.safeParse(input);
     expect(result.success).toBe(false);
+  });
+
+  it("rejects a currency code that is lowercase", () => {
+    const input = validAnalysis();
+    input.amounts[0].currency = "pln";
+    const result = documentAnalysisSchema.safeParse(input);
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a currency code containing digits", () => {
+    const input = validAnalysis();
+    input.amounts[0].currency = "PL1";
+    const result = documentAnalysisSchema.safeParse(input);
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects pages that are zero or negative", () => {
+    const input = validAnalysis();
+    input.document.pages = 0;
+    const result = documentAnalysisSchema.safeParse(input);
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a non-integer page count", () => {
+    const input = validAnalysis();
+    input.document.pages = 2.5;
+    const result = documentAnalysisSchema.safeParse(input);
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts exactly 3 keyPoints (lower bound)", () => {
+    const input = validAnalysis();
+    input.keyPoints = ["one", "two", "three"];
+    const result = documentAnalysisSchema.safeParse(input);
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts exactly 7 keyPoints (upper bound)", () => {
+    const input = validAnalysis();
+    input.keyPoints = Array.from({ length: 7 }, (_, i) => `point ${i}`);
+    const result = documentAnalysisSchema.safeParse(input);
+    expect(result.success).toBe(true);
   });
 
   it("rejects fewer than 3 keyPoints", () => {

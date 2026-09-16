@@ -3,7 +3,7 @@ import { SummaryCard } from "./SummaryCard";
 import { KeyPoints } from "./KeyPoints";
 import { EntityChips } from "./EntityChips";
 import { JsonPanel } from "./JsonPanel";
-import type { DocumentAnalysis } from "../../types/documentAnalysis.schema";
+import type { DocumentAnalysis } from "../../types/documentAnalysis.schema/documentAnalysis.schema";
 import { useAnalysisStore } from "../../store/analysisStore";
 
 interface ResultsViewProps {

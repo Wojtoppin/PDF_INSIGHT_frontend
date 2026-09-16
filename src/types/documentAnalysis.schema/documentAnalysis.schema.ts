@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { documentSchema } from "./documentAnalysis.schema/document.schema";
-import { entitiesSchema } from "./documentAnalysis.schema/entities.schema";
-import { amountSchema } from "./documentAnalysis.schema/amount.schema";
-import { dateEntrySchema } from "./documentAnalysis.schema/dateEntry.schema";
+import { documentSchema } from "./document.schema";
+import { entitiesSchema } from "./entities.schema";
+import { amountSchema } from "./amount.schema";
+import { dateEntrySchema } from "./dateEntry.schema";
 
 export const documentAnalysisSchema = z.object({
   document: documentSchema,

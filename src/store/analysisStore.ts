@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { analyzeDocument, AnalysisError } from "../api/analyzeDocument";
 import { validateFile } from "../helpers/validateFile";
 import type { AnalysisStatus } from "../types/analysisStatus";
-import type { DocumentAnalysis } from "../types/documentAnalysis.schema";
+import type { DocumentAnalysis } from "../types/documentAnalysis.schema/documentAnalysis.schema";
 import type { ErrorKind } from "../types/errorKind";
 
 interface AnalysisState {
