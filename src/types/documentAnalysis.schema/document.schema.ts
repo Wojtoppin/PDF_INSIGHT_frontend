@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { documentTypeSchema } from "./documentType.schema";
 
+// TODO: Separate all of the zod objects containing dates into separate getDocumentSchema and documentSchema
 export const documentSchema = z.object({
   fileName: z.string(),
   pages: z.number().int().positive(),
