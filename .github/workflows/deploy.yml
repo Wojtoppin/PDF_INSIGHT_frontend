@@ -26,6 +26,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run format:check
+      - run: npm run test
       - run: npm run build
         env:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
