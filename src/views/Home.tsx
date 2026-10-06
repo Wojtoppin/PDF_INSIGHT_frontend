@@ -3,24 +3,16 @@ import { ProcessingStamp } from "../components/upload/ProcessingStamp";
 import { ErrorStamp } from "../components/upload/ErrorStamp";
 import { ResultsView } from "../components/results/ResultsView";
 import { HistoryList } from "../components/history/HistoryList";
-import { Button } from "../components/common/Button";
 import { useAnalysisStore } from "../store/analysisStore";
 
 export function Home() {
   const status = useAnalysisStore((state) => state.status);
   const file = useAnalysisStore((state) => state.file);
   const result = useAnalysisStore((state) => state.result);
-  const reset = useAnalysisStore((state) => state.reset);
 
   return (
     <main className="flex min-h-screen justify-center px-6 py-16">
       <div className="w-full max-w-2xl">
-        {(status === "processing" || status === "error") && (
-          <Button variant="ghost" onClick={reset} className="mb-6 text-xs">
-            ← Wstecz
-          </Button>
-        )}
-
         {status !== "success" && (
           <header className="mb-10 text-center">
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-ink-soft">

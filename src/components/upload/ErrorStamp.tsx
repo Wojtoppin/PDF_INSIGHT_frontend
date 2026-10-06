@@ -19,9 +19,16 @@ export function ErrorStamp() {
 
       <p className="max-w-sm font-sans text-sm text-ink-soft">{errorMessage}</p>
 
-      <Button variant="ghost" onClick={needsNewFile ? reset : retry}>
-        {needsNewFile ? "Wybierz inny plik" : "Spróbuj ponownie"}
-      </Button>
+      <div className="flex gap-3">
+        {!needsNewFile && (
+          <Button variant="ghost" onClick={reset}>
+            ← Wstecz
+          </Button>
+        )}
+        <Button variant="ghost" onClick={needsNewFile ? reset : retry}>
+          {needsNewFile ? "Wybierz inny plik" : "Spróbuj ponownie"}
+        </Button>
+      </div>
     </div>
   );
 }
