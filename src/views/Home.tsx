@@ -3,6 +3,7 @@ import { ProcessingStamp } from "../components/upload/ProcessingStamp";
 import { ErrorStamp } from "../components/upload/ErrorStamp";
 import { ResultsView } from "../components/results/ResultsView";
 import { HistoryList } from "../components/history/HistoryList";
+import { Button } from "../components/common/Button";
 import { useAnalysisStore } from "../store/analysisStore";
 
 export function Home() {
@@ -14,21 +15,17 @@ export function Home() {
   return (
     <main className="flex min-h-screen justify-center px-6 py-16">
       <div className="w-full max-w-2xl">
+        {(status === "processing" || status === "error") && (
+          <Button variant="ghost" onClick={reset} className="mb-6 text-xs">
+            ← Wstecz
+          </Button>
+        )}
+
         {status !== "success" && (
           <header className="mb-10 text-center">
-            {status === "idle" ? (
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-ink-soft">
-                PDF Insight
-              </p>
-            ) : (
-              <button
-                type="button"
-                onClick={reset}
-                className="font-mono text-xs uppercase tracking-[0.3em] text-ink-soft transition-colors hover:text-ink"
-              >
-                PDF Insight
-              </button>
-            )}
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-ink-soft">
+              PDF Insight
+            </p>
             {status === "idle" && (
               <h1 className="mt-3 font-display text-4xl leading-tight text-ink sm:text-5xl">
                 Wgraj dokument.
