@@ -9,15 +9,26 @@ export function Home() {
   const status = useAnalysisStore((state) => state.status);
   const file = useAnalysisStore((state) => state.file);
   const result = useAnalysisStore((state) => state.result);
+  const reset = useAnalysisStore((state) => state.reset);
 
   return (
     <main className="flex min-h-screen justify-center px-6 py-16">
       <div className="w-full max-w-2xl">
         {status !== "success" && (
           <header className="mb-10 text-center">
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-ink-soft">
-              PDF Insight
-            </p>
+            {status === "idle" ? (
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-ink-soft">
+                PDF Insight
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={reset}
+                className="font-mono text-xs uppercase tracking-[0.3em] text-ink-soft transition-colors hover:text-ink"
+              >
+                PDF Insight
+              </button>
+            )}
             {status === "idle" && (
               <h1 className="mt-3 font-display text-4xl leading-tight text-ink sm:text-5xl">
                 Wgraj dokument.
